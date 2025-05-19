@@ -51,4 +51,36 @@ public class AppMetrics {
                 .quantile(0.9, 0.01)   // 90º percentil com erro de 1%
                 .register();
     }
+
+    public static AppMetrics getInstance(){
+        return INSTANCE;
+    }
+
+    public void incrementarRequisicao(String endpoint, String metodo){
+        requisicoesTotais.labels(endpoint, metodo).inc();
+    }
+
+    public void incrementarErro(String endpoint, String codigoErro){
+        requisicoesComErro.labels(endpoint, codigoErro).inc();
+    }
+
+    public void incrementarUsuariosAtivos(String tipoUsuario){
+        usuariosAtivos.labels(tipoUsuario).inc();
+    }
+
+    public void decrementarUsuariosAtivos(String tipoUsuario){
+        usuariosAtivos.labels(tipoUsuario).dec();
+    }
+    public void definirUsuariosAtivos(String tipoUsuario, int quantidade) {
+        usuariosAtivos.labels(tipoUsuario).set(quantidade);
+    }
+
+    public Histogram.Timer iniciarTempoResposta(String endpoint) {
+        return tempoResposta.labels(endpoint).startTimer();
+    }
+
+    public void observarTamanhoRequisicao(String endpoint, double tamanhoBytes) {
+        tamanhoRequisicao.labels(endpoint).observe(tamanhoBytes);
+    }
 }
+
